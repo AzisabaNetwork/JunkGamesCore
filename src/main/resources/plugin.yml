@@ -1,0 +1,10 @@
+name: JunkGames
+version: '0.0.0'
+main: net.azisaba.jg.JunkGames
+api-version: '1.17'
+commands:
+  junkgames:
+    description: View a list of available games.
+    usage: /junkgames
+    aliases:
+      - jg
