@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,6 +50,7 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
         ItemStack stack = new ItemStack(this.getFavicon());
         ItemMeta meta = stack.getItemMeta();
         meta.displayName(this.getDisplayName().decoration(TextDecoration.ITALIC, false));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
 
         List<Component> lore = this.getLore();
         lore.add(Component.text(""));

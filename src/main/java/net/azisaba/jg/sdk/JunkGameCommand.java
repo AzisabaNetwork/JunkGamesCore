@@ -32,6 +32,12 @@ public class JunkGameCommand extends Command
             return true;
         }
 
+        if (this.game.isPlayer(player))
+        {
+            sender.sendMessage(Component.text(String.format("あなたは既に %S に接続しています", this.game.getName())).color(NamedTextColor.RED));
+            return true;
+        }
+
         this.game.onJunkGameCommand(player);
         return true;
     }
