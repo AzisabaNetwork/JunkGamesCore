@@ -11,7 +11,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener
@@ -24,7 +23,7 @@ public class PlayerListener implements Listener
 
         if (game != null)
         {
-            game.getListeners().forEach(l -> l.onPlayerJoin(player));
+            game.call(new net.azisaba.jg.sdk.event.PlayerJoinEvent(player));
         }
     }
 
@@ -36,19 +35,7 @@ public class PlayerListener implements Listener
 
         if (game != null)
         {
-            game.getListeners().forEach(l -> l.onPlayerQuit(player));
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDamage(PlayerDeathEvent event)
-    {
-        Player player = event.getPlayer();
-        IJunkGame game = JunkGames.getPlugin().getJunkGame(player);
-
-        if (game != null)
-        {
-            game.getListeners().forEach(l -> l.onPlayerDeath(player));
+            game.call(new net.azisaba.jg.sdk.event.PlayerQuitEvent(player));
         }
     }
 
@@ -62,12 +49,12 @@ public class PlayerListener implements Listener
 
         if (from != null)
         {
-            from.getListeners().forEach(l -> l.onPlayerQuit(player));
+            from.call(new net.azisaba.jg.sdk.event.PlayerQuitEvent(player));
         }
 
         if (to != null)
         {
-            to.getListeners().forEach(l -> l.onPlayerJoin(player));
+            to.call(new net.azisaba.jg.sdk.event.PlayerJoinEvent(player));
         }
     }
 
@@ -78,7 +65,6 @@ public class PlayerListener implements Listener
         {
             for (IJunkGameCommand command : game.getCommands())
             {
-                System.out.println(command.getName());
                 event.getCommands().removeIf(c -> c.equalsIgnoreCase(command.getName()) || c.equalsIgnoreCase("/" + command.getName()) || c.equalsIgnoreCase(game.getName() + ":" + command.getName()));
             }
         }
@@ -105,7 +91,7 @@ public class PlayerListener implements Listener
 
         if (game != null)
         {
-            game.getListeners().forEach(l -> l.onChat(player, event.message()));
+            game.call(new net.azisaba.jg.sdk.event.PlayerChatEvent(event));
         }
         else
         {

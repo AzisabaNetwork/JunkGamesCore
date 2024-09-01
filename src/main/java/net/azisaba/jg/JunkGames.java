@@ -27,13 +27,28 @@ public final class JunkGames extends JavaPlugin
 
     public void register(@NotNull IJunkGame game)
     {
-        this.games.add(game);
+        for (int i = 0; i < this.games.size(); i ++)
+        {
+            IJunkGame g = this.games.get(i);
+
+            if (game.getPriority() < g.getPriority())
+            {
+                this.games.add(i, game);
+                break;
+            }
+        }
+
+        if (this.games.isEmpty() || ! this.games.contains(game))
+        {
+            this.games.add(0, game);
+        }
+
         Bukkit.getCommandMap().register(game.getName(), this.getName(), new JunkGameCommand(game));
     }
 
     public IJunkGame getJunkGame(World world)
     {
-        List<IJunkGame> filteredGames = new ArrayList<>(this.games.stream().filter(g -> g.getWorlds().contains(world)).toList());
+        List<IJunkGame> filteredGames = new ArrayList<>(this.games.stream().filter(g -> g.contains(world)).toList());
         return filteredGames.isEmpty() ? null : filteredGames.get(0);
     }
 

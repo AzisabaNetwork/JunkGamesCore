@@ -1,6 +1,9 @@
 package net.azisaba.jg.sdk;
 
 import net.azisaba.jg.JunkGames;
+import net.azisaba.jg.sdk.event.EventEngine;
+import net.azisaba.jg.sdk.event.JunkGameEvent;
+import net.azisaba.jg.sdk.event.JunkGameListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -26,8 +29,10 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     }
 
     protected final JunkGames junkGames;
+
+    protected final EventEngine event = new EventEngine();
+
     protected final List<World> worlds = new ArrayList<>();
-    protected final List<JunkGameListener> listeners = new ArrayList<>();
     protected final List<IJunkGameCommand> commands = new ArrayList<>();
 
     public JunkGame()
@@ -86,7 +91,9 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     @Override
     public List<JunkGameListener> getListeners()
     {
-        return this.listeners;
+        List<JunkGameListener> listeners = new ArrayList<>();
+        this.event.getRegistry().values().forEach(i -> i.forEach(j -> listeners.add(j.instance())));
+        return listeners;
     }
 
     @Override
@@ -110,9 +117,9 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
         }
     }
 
-    public void addListener(@NotNull JunkGameListener listener)
+    protected void addListener(JunkGameListener listener)
     {
-        this.listeners.add(listener);
+        this.event.register(listener);
     }
 
     @Override
@@ -125,6 +132,12 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     public void onEnable()
     {
         JunkGame.plugin = this;
+    }
+
+    @Override
+    public void call(JunkGameEvent event)
+    {
+        this.event.call(event);
     }
 
     @Override

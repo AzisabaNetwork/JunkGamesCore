@@ -1,5 +1,7 @@
 package net.azisaba.jg.sdk;
 
+import net.azisaba.jg.sdk.event.JunkGameEvent;
+import net.azisaba.jg.sdk.event.JunkGameListener;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -7,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface IJunkGame
@@ -18,9 +19,11 @@ public interface IJunkGame
 
     @NotNull Material getFavicon();
 
+    int getPriority();
+
     @NotNull ItemStack getStack(Player player);
 
-    ArrayList<Component> getLore();
+    List<Component> getLore();
 
     List<Player> getPlayers();
 
@@ -33,6 +36,8 @@ public interface IJunkGame
     boolean isPlayer(Player player);
 
     void onJunkGameCommand(Player player);
+
+    void call(JunkGameEvent event);
 
     boolean contains(World world);
 

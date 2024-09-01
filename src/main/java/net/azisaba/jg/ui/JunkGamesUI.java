@@ -27,7 +27,7 @@ public class JunkGamesUI extends InventoryUI
             if ((i - 9) < games.size())
             {
                 IJunkGame game = games.get(i - 9);
-                this.addListener(i, game.getStack(this.player), game.getName(), true);
+                this.addListener(i, game.getStack(this.player), game.getName());
                 continue;
             }
 
