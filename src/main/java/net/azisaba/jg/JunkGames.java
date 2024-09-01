@@ -1,14 +1,15 @@
 package net.azisaba.jg;
 
+import net.azisaba.jg.command.JunkGameCommand;
 import net.azisaba.jg.command.JunkGamesCommand;
 import net.azisaba.jg.listener.InventoryListener;
 import net.azisaba.jg.listener.PlayerListener;
 import net.azisaba.jg.sdk.IJunkGame;
-import net.azisaba.jg.sdk.JunkGameCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,10 @@ public final class JunkGames extends JavaPlugin
 
     private final List<IJunkGame> games = new ArrayList<>();
 
-    public void register(IJunkGame game)
+    public void register(@NotNull IJunkGame game)
     {
         this.games.add(game);
-
-        Bukkit.getCommandMap().register(game.getName(), new JunkGameCommand(game));
+        Bukkit.getCommandMap().register(game.getName(), this.getName(), new JunkGameCommand(game));
     }
 
     public IJunkGame getJunkGame(World world)
@@ -37,7 +37,7 @@ public final class JunkGames extends JavaPlugin
         return filteredGames.isEmpty() ? null : filteredGames.get(0);
     }
 
-    public IJunkGame getJunkGame(Player player)
+    public IJunkGame getJunkGame(@NotNull Player player)
     {
         return this.getJunkGame(player.getWorld());
     }

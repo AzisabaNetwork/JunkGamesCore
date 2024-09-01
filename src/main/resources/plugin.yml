@@ -1,5 +1,5 @@
 name: JunkGames
-version: '0.0.1'
+version: '${version}'
 main: net.azisaba.jg.JunkGames
 api-version: '1.17'
 commands:

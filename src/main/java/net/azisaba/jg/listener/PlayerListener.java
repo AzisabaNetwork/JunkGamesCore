@@ -3,15 +3,16 @@ package net.azisaba.jg.listener;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.azisaba.jg.JunkGames;
 import net.azisaba.jg.sdk.IJunkGame;
+import net.azisaba.jg.sdk.IJunkGameCommand;
+import net.azisaba.jg.util.Typing;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener
 {
@@ -71,11 +72,35 @@ public class PlayerListener implements Listener
     }
 
     @EventHandler
+    public void onPlayerCommandSend(PlayerCommandSendEvent event)
+    {
+        for (IJunkGame game : JunkGames.getPlugin().getJunkGames().stream().filter(g -> g != JunkGames.getPlugin().getJunkGame(event.getPlayer())).toList())
+        {
+            for (IJunkGameCommand command : game.getCommands())
+            {
+                System.out.println(command.getName());
+                event.getCommands().removeIf(c -> c.equalsIgnoreCase(command.getName()) || c.equalsIgnoreCase("/" + command.getName()) || c.equalsIgnoreCase(game.getName() + ":" + command.getName()));
+            }
+        }
+    }
+
+    @EventHandler
     public void onAsyncChat(AsyncChatEvent event)
     {
         event.setCancelled(true);
 
         Player player = event.getPlayer();
+        Typing typing = Typing.getInstance(player);
+
+        if (typing != null)
+        {
+            String content = ((TextComponent) event.message()).content();
+
+            player.sendMessage(Component.text(" " + content).color(NamedTextColor.GRAY));
+            typing.onTyped(content);
+            return;
+        }
+
         IJunkGame game = JunkGames.getPlugin().getJunkGame(player);
 
         if (game != null)

@@ -1,5 +1,6 @@
 package net.azisaba.jg.sdk;
 
+import net.azisaba.jg.JunkGames;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -7,38 +8,28 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class JunkGameCommand extends Command
+public abstract class JunkGameCommand implements IJunkGameCommand
 {
-    private final IJunkGame game;
-
-    public JunkGameCommand(@NotNull IJunkGame game)
+    public JunkGameCommand()
     {
-        super(game.getName());
-        this.game = game;
+        this.getProvider().getCommands().add(this);
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args)
+    @Deprecated
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
     {
-        if (! (sender instanceof Player player))
+        if (sender instanceof Player player)
         {
-            sender.sendMessage(Component.text("Please run this from within the game.").color(NamedTextColor.RED));
-            return true;
+            IJunkGame game = JunkGames.getPlugin().getJunkGame(player);
+
+            if (game != this.getProvider())
+            {
+                sender.sendMessage(Component.text("ここではこのコマンドを使用することはできません").color(NamedTextColor.RED));
+                return true;
+            }
         }
 
-        if (args.length != 0)
-        {
-            sender.sendMessage(Component.text(String.format("Correct syntax: /%s", this.getName())).color(NamedTextColor.RED));
-            return true;
-        }
-
-        if (this.game.isPlayer(player))
-        {
-            sender.sendMessage(Component.text(String.format("あなたは既に %S に接続しています", this.game.getName())).color(NamedTextColor.RED));
-            return true;
-        }
-
-        this.game.onJunkGameCommand(player);
-        return true;
+        return this.execute(sender, command, label, args);
     }
 }

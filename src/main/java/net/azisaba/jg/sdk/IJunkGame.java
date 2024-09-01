@@ -28,6 +28,8 @@ public interface IJunkGame
 
     List<JunkGameListener> getListeners();
 
+    List<IJunkGameCommand> getCommands();
+
     boolean isPlayer(Player player);
 
     void onJunkGameCommand(Player player);

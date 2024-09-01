@@ -27,22 +27,22 @@ public class JunkGamesUI extends InventoryUI
             if ((i - 9) < games.size())
             {
                 IJunkGame game = games.get(i - 9);
-                this.registerListener(i, game.getStack(this.getPlayer()), game.getName(), true);
+                this.addListener(i, game.getStack(this.player), game.getName(), true);
                 continue;
             }
 
-            ItemStack stack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-            ItemMeta meta = stack.getItemMeta();
-            meta.displayName(Component.text(""));
-            stack.setItemMeta(meta);
+            ItemStack wallStack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+            ItemMeta wallMeta = wallStack.getItemMeta();
+            wallMeta.displayName(Component.text(""));
+            wallStack.setItemMeta(wallMeta);
 
-            this.inventory.setItem(i, stack);
+            this.inventory.setItem(i, wallStack);
         }
 
         ItemStack closeStack = new ItemStack(Material.OAK_DOOR);
         ItemMeta closeMeta = closeStack.getItemMeta();
         closeMeta.displayName(Component.text("閉じる").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-        closeMeta.lore(List.of(Component.text("この画面を閉じます。").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
+        closeMeta.lore(List.of(Component.text("この画面を閉じます").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
         closeStack.setItemMeta(closeMeta);
         this.inventory.setItem(26, closeStack);
     }

@@ -1,12 +1,12 @@
 package net.azisaba.jg.listener;
 
+import net.azisaba.jg.ui.IInventoryUI;
 import net.azisaba.jg.ui.InventoryUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 
 public class InventoryListener implements Listener
 {
@@ -14,12 +14,11 @@ public class InventoryListener implements Listener
     public void onInventoryClick(InventoryClickEvent event)
     {
         Player player = (Player) event.getWhoClicked();
-        Inventory inventory = player.getOpenInventory().getTopInventory();
-        InventoryUI ui = InventoryUI.getInstance(inventory);
+        IInventoryUI inventoryUI = InventoryUI.getInstance(player);
 
-        if (ui != null)
+        if (inventoryUI != null)
         {
-            ui.onClick(event);
+            inventoryUI.onClick(event);
         }
     }
 
@@ -27,12 +26,11 @@ public class InventoryListener implements Listener
     public void onInventoryClose(InventoryCloseEvent event)
     {
         Player player = (Player) event.getPlayer();
-        Inventory inventory = player.getOpenInventory().getTopInventory();
-        InventoryUI ui = InventoryUI.getInstance(inventory);
+        IInventoryUI inventoryUI = InventoryUI.getInstance(player);
 
-        if (ui != null)
+        if (inventoryUI != null)
         {
-            ui.onClose(event);
+            inventoryUI.onClose(event);
         }
     }
 }

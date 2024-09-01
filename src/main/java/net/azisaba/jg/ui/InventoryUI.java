@@ -1,6 +1,7 @@
 package net.azisaba.jg.ui;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -13,61 +14,53 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class InventoryUI
+public class InventoryUI implements IInventoryUI
 {
-    protected static final List<InventoryUI> instances = new ArrayList<>();
+    private static final List<IInventoryUI> instances = new ArrayList<>();
 
-    public static InventoryUI getInstance(Inventory inventory)
+    public static IInventoryUI getInstance(Inventory inventory)
     {
-        List<InventoryUI> filteredInstances = new ArrayList<>(InventoryUI.instances.stream().filter(i -> i.getInventory() == inventory).toList());
-        return filteredInstances.isEmpty() ? null : filteredInstances.get(0);
+        List<IInventoryUI> filteredInstances = InventoryUI.instances.stream().filter(i -> i.getInventory() == inventory).toList();
+        return filteredInstances.isEmpty() ? null : filteredInstances.get(filteredInstances.size() - 1);
+    }
+
+    public static IInventoryUI getInstance(Player player)
+    {
+        return InventoryUI.getInstance(player.getOpenInventory().getTopInventory());
+    }
+
+    @Deprecated
+    public static List<IInventoryUI> getInstances()
+    {
+        return InventoryUI.instances;
     }
 
     protected final Player player;
     protected final Inventory inventory;
-    protected final Map<Integer, String> clientListeners = new HashMap<>();
-    protected final Map<Integer, String> serverListeners = new HashMap<>();
 
-    public InventoryUI(Player player, Inventory inventory)
+    protected final Map<Integer, ListenerSlot> listeners = new HashMap<>();
+
+    public InventoryUI(@NotNull Player player, @NotNull Inventory inventory)
     {
         this.player = player;
         this.inventory = inventory;
 
-        Inventory currentInventory = this.player.getOpenInventory().getTopInventory();
-
-        if (InventoryUI.getInstance(currentInventory) != null)
+        if (InventoryUI.getInstance(player) != null)
         {
-            InventoryUI.getInstance(currentInventory).onClose(new InventoryCloseEvent(player.getOpenInventory()));
+            InventoryUI.getInstance(player).onClose(new InventoryCloseEvent(player.getOpenInventory()));
         }
 
         this.player.openInventory(this.inventory);
         InventoryUI.instances.add(this);
     }
 
-    public Player getPlayer()
-    {
-        return this.player;
-    }
-
+    @Override
     public Inventory getInventory()
     {
         return this.inventory;
     }
 
-    public void registerListener(int index, @NotNull ItemStack stack, @NotNull String command, boolean clientSide)
-    {
-        if (clientSide)
-        {
-            this.clientListeners.put(index, command);
-        }
-        else
-        {
-            this.serverListeners.put(index, command);
-        }
-
-        this.inventory.setItem(index, stack);
-    }
-
+    @Override
     public void onClick(InventoryClickEvent event)
     {
         if (event.getCurrentItem() == null)
@@ -75,21 +68,33 @@ public abstract class InventoryUI
             return;
         }
 
-        if (this.clientListeners.containsKey(event.getSlot()))
+        if (! this.listeners.containsKey(event.getSlot()))
         {
-            event.getWhoClicked().closeInventory();
-            Bukkit.dispatchCommand(this.player, this.clientListeners.get(event.getSlot()));
+            return;
         }
 
-        if (this.serverListeners.containsKey(event.getSlot()))
-        {
-            event.getWhoClicked().closeInventory();
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), this.serverListeners.get(event.getSlot()));
-        }
+        ListenerSlot listener = this.listeners.get(event.getSlot());
+        CommandSender sender = listener.serverside() ? Bukkit.getConsoleSender() : event.getWhoClicked();
+
+        Bukkit.dispatchCommand(sender, listener.command());
     }
 
+    @Override
     public void onClose(InventoryCloseEvent event)
     {
         InventoryUI.instances.remove(this);
     }
+
+    protected void addListener(int index, @NotNull ItemStack stack, @NotNull String command, boolean serverside)
+    {
+        this.inventory.setItem(index, stack);
+        this.listeners.put(index, new ListenerSlot(command, serverside));
+    }
+
+    protected void addListener(int index, @NotNull ItemStack stack, @NotNull String command)
+    {
+        this.addListener(index, stack, command, false);
+    }
+
+    public record ListenerSlot(String command, boolean serverside) {}
 }

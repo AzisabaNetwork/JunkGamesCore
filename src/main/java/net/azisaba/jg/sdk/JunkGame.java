@@ -28,6 +28,7 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     protected final JunkGames junkGames;
     protected final List<World> worlds = new ArrayList<>();
     protected final List<JunkGameListener> listeners = new ArrayList<>();
+    protected final List<IJunkGameCommand> commands = new ArrayList<>();
 
     public JunkGame()
     {
@@ -45,7 +46,7 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     }
 
     @Override
-    public @NotNull ItemStack getStack(Player player)
+    public @NotNull ItemStack getStack(@NotNull Player player)
     {
         ItemStack stack = new ItemStack(this.getFavicon());
         ItemMeta meta = stack.getItemMeta();
@@ -88,7 +89,28 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
         return this.listeners;
     }
 
-    public void addListener(JunkGameListener listener)
+    @Override
+    public List<IJunkGameCommand> getCommands()
+    {
+        return this.commands;
+    }
+
+    public void addWorld(World world)
+    {
+        this.worlds.add(world);
+    }
+
+    public void addWorld(String name)
+    {
+        World world = Bukkit.getWorld(name);
+
+        if (world != null)
+        {
+            this.addWorld(world);
+        }
+    }
+
+    public void addListener(@NotNull JunkGameListener listener)
     {
         this.listeners.add(listener);
     }
@@ -112,7 +134,7 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     }
 
     @Override
-    public void broadcast(Component message)
+    public void broadcast(@NotNull Component message)
     {
         this.getPlayers().forEach(p -> p.sendMessage(message));
     }
