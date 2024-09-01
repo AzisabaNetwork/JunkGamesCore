@@ -7,7 +7,7 @@ Junk Games Core System
 Junk Games Coreは、 [アジ鯖](https://www.azisaba.net) のJunk Gamesサーバーの基幹システムとして開発されたSpigot プラグインです：
 
 ```yaml
-Version: 0.1.0
+Version: 0.2.0
 Minecraft: 1.17.1
 ```
 
