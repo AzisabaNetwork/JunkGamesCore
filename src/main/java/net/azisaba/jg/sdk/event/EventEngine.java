@@ -32,7 +32,7 @@ public class EventEngine
             }
 
             Class<? extends JunkGameEvent> event = (Class<? extends JunkGameEvent>) args[0];
-            List<Subscriber> subscribers = this.registry.containsKey(event) ? this.registry.get(listener.getClass()) : new ArrayList<>();
+            List<Subscriber> subscribers = this.registry.containsKey(event) ? this.registry.get(event) : new ArrayList<>();
             subscribers.add(new Subscriber(listener, method));
 
             this.registry.put(event, subscribers);
