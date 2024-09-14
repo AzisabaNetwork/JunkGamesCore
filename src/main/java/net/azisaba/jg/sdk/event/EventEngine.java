@@ -21,7 +21,7 @@ public class EventEngine
         {
             Class<?>[] args = method.getParameterTypes();
 
-            if (this.registry.containsKey(method))
+            if (this.registry.values().stream().anyMatch(subscribers -> subscribers.stream().anyMatch(subscriber -> subscriber.method() == method)))
             {
                 continue;
             }

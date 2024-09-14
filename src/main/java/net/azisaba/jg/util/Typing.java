@@ -1,5 +1,6 @@
 package net.azisaba.jg.util;
 
+import net.azisaba.jg.JunkGames;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +39,24 @@ public abstract class Typing
     public Player getPlayer()
     {
         return this.player;
+    }
+
+    public String getConfirmCode(int length)
+    {
+        if (length < 1)
+        {
+            length = 1;
+        }
+
+        String characters = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnoprstuvwxyz12345678";
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i ++)
+        {
+            sb.append(characters.charAt(JunkGames.random.nextInt(characters.length())));
+        }
+
+        return sb.toString();
     }
 
     public void onTyped(@NotNull String string)

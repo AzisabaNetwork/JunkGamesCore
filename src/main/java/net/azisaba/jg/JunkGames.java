@@ -13,10 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public final class JunkGames extends JavaPlugin
 {
     private static JunkGames plugin;
+
+    public static final Random random = new Random();
 
     public static JunkGames getPlugin()
     {
