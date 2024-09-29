@@ -19,9 +19,11 @@ public interface IJunkGame
 
     @NotNull Material getFavicon();
 
+    @NotNull String getCategory();
+
     int getPriority();
 
-    @NotNull ItemStack getStack(Player player);
+    @NotNull ItemStack getStack();
 
     List<Component> getLore();
 
@@ -35,9 +37,9 @@ public interface IJunkGame
 
     boolean isPlayer(Player player);
 
-    void onJunkGameCommand(Player player);
+    void onJunkGameCommand(@NotNull Player player);
 
-    void call(JunkGameEvent event);
+    void call(@NotNull JunkGameEvent event);
 
     boolean contains(World world);
 

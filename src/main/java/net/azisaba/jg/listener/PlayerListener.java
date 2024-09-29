@@ -11,6 +11,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener
@@ -19,12 +20,8 @@ public class PlayerListener implements Listener
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         Player player = event.getPlayer();
-        IJunkGame game = JunkGames.getPlugin().getJunkGame(player);
 
-        if (game != null)
-        {
-            game.call(new net.azisaba.jg.sdk.event.PlayerJoinEvent(player));
-        }
+        player.teleport(JunkGames.spawn);
     }
 
     @EventHandler
@@ -68,6 +65,17 @@ public class PlayerListener implements Listener
                 event.getCommands().removeIf(c -> c.equalsIgnoreCase(command.getName()) || c.equalsIgnoreCase("/" + command.getName()) || c.equalsIgnoreCase(game.getName() + ":" + command.getName()));
             }
         }
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent event)
+    {
+        if (! (event.getEntity() instanceof Player player))
+        {
+            return;
+        }
+
+        event.setCancelled(event.isCancelled() || JunkGames.lobby.getPlayers().contains(player));
     }
 
     @EventHandler

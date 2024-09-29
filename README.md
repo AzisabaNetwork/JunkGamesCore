@@ -7,7 +7,7 @@ Junk Games Core System
 Junk Games Coreは、 [アジ鯖](https://www.azisaba.net) のJunk Gamesサーバーの基幹システムとして開発されたSpigot プラグインです：
 
 ```yaml
-Version: 0.2.0
+Version: 0.2.3
 Minecraft: 1.17.1
 ```
 
@@ -64,11 +64,14 @@ public final class Example extends JunkGame {}
 `JunkGame` では同時に `IJunkGame` も継承しているために、加えていくつかの実装を行う必要があります：
 
 ```java
-// 表示名を定義します
+// 表示名を定義します (ゲームタイトルには緑色を推奨)
 @NotNull Component getDisplayName();
 
 // faviconを定義します
 @NotNUll Material getFavicon();
+
+// カテゴリーを定義します (複数指定するには半角スペースで区切ります)
+@NotNull String getCategory();
 
 // loreを定義します
 @NotnUll List<Component> getLore();

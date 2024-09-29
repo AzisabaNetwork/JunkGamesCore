@@ -5,9 +5,10 @@ import net.azisaba.jg.command.JunkGamesCommand;
 import net.azisaba.jg.listener.InventoryListener;
 import net.azisaba.jg.listener.PlayerListener;
 import net.azisaba.jg.sdk.IJunkGame;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,14 +20,18 @@ public final class JunkGames extends JavaPlugin
 {
     private static JunkGames plugin;
 
+    public static World lobby;
+
+    public static Location spawn;
+
     public static final Random random = new Random();
+
+    private final List<IJunkGame> games = new ArrayList<>();
 
     public static JunkGames getPlugin()
     {
         return JunkGames.plugin;
     }
-
-    private final List<IJunkGame> games = new ArrayList<>();
 
     public void register(@NotNull IJunkGame game)
     {
@@ -74,5 +79,51 @@ public final class JunkGames extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
         this.getCommand("junkgames").setExecutor(new JunkGamesCommand());
+
+        this.saveDefaultConfig();
+
+        JunkGames.lobby = Bukkit.getWorld("lobby");
+
+        if (JunkGames.lobby == null)
+        {
+            WorldCreator creator = new WorldCreator("lobby");
+
+            creator.generator(new ChunkGenerator()
+            {
+                @Override
+                public @NotNull ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z, @NotNull BiomeGrid biome)
+                {
+                    ChunkData chunkData = this.createChunkData(world);
+
+                    for (int x2 = 0; x2 < 16; x2 ++)
+                    {
+                        for (int z2 = 0; z2 < 16; z2 ++)
+                        {
+                            biome.setBiome(x2, z2, Biome.PLAINS);
+                        }
+                    }
+
+                    return chunkData;
+                }
+            });
+
+            JunkGames.lobby = creator.createWorld();
+
+            if (JunkGames.lobby == null)
+            {
+                return;
+            }
+
+            JunkGames.lobby.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+            JunkGames.lobby.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            JunkGames.lobby.setTime(6000);
+        }
+
+        JunkGames.spawn = new Location(JunkGames.lobby,
+                this.getConfig().getDouble("spawn.x"),
+                this.getConfig().getDouble("spawn.y"),
+                this.getConfig().getDouble("spawn.z"),
+                (float) this.getConfig().getDouble("spawn.yaw"),
+                (float) this.getConfig().getDouble("spawn.pitch"));
     }
 }

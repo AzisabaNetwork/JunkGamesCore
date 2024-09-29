@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class JunkGame extends JavaPlugin implements IJunkGame
 {
@@ -26,6 +28,11 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     public static JunkGame getPlugin()
     {
         return JunkGame.plugin;
+    }
+
+    public static Logger getPluginLogger()
+    {
+        return JunkGame.getPlugin().getLogger();
     }
 
     protected final JunkGames junkGames;
@@ -51,23 +58,18 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     }
 
     @Override
-    public @NotNull ItemStack getStack(@NotNull Player player)
+    public @NotNull ItemStack getStack()
     {
         ItemStack stack = new ItemStack(this.getFavicon());
         ItemMeta meta = stack.getItemMeta();
         meta.displayName(this.getDisplayName().decoration(TextDecoration.ITALIC, false));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
 
-        List<Component> lore = this.getLore();
-        lore.add(Component.text(""));
-        if (this.isPlayer(player))
-        {
-            lore.add(Component.text("PLAYING").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false));
-        }
-        else
-        {
-            lore.add(Component.text(String.format("%s 人がプレイ中！", this.getPlayers().size())).color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
-        }
+        List<Component> lore = new ArrayList<>();
+
+        lore.add(Component.text(this.getCategory()).color(NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text().build());
+        lore.addAll(this.getLore());
 
         meta.lore(lore);
         stack.setItemMeta(meta);
@@ -102,12 +104,12 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
         return this.commands;
     }
 
-    public void addWorld(World world)
+    public void addWorld(@NotNull World world)
     {
         this.worlds.add(world);
     }
 
-    public void addWorld(String name)
+    public void addWorld(@NotNull String name)
     {
         World world = Bukkit.getWorld(name);
 
@@ -117,9 +119,14 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
         }
     }
 
-    protected void addListener(JunkGameListener listener)
+    protected void addListener(@NotNull JunkGameListener listener)
     {
         this.event.register(listener);
+
+        if (listener instanceof Listener bukkitListener)
+        {
+            Bukkit.getPluginManager().registerEvents(bukkitListener, this);
+        }
     }
 
     @Override
@@ -135,7 +142,7 @@ public abstract class JunkGame extends JavaPlugin implements IJunkGame
     }
 
     @Override
-    public void call(JunkGameEvent event)
+    public void call(@NotNull JunkGameEvent event)
     {
         this.event.call(event);
     }

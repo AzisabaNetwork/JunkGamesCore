@@ -63,6 +63,8 @@ public class InventoryUI implements IInventoryUI
     @Override
     public void onClick(InventoryClickEvent event)
     {
+        event.setCancelled(true);
+
         if (event.getCurrentItem() == null)
         {
             return;
