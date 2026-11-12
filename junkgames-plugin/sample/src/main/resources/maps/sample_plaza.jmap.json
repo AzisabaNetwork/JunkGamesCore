@@ -1,0 +1,25 @@
+{
+  "format": "junkgames/map",
+  "formatVersion": 1,
+  "id": "sample_plaza",
+  "displayName": "広場",
+  "world": {
+    "source": { "type": "template", "ref": "templates/sample_plaza" },
+    "ifMissing": "create",
+    "generator": { "type": "void" },
+    "lifecycle": "ephemeral",
+    "reset": "recreate"
+  },
+  "compatibleGames": ["sample_storm"],
+  "points": {
+    "spawn": [
+      { "x": 0.5, "y": 65, "z": -6.5, "yaw": 0 },
+      { "x": 6.5, "y": 65, "z": 0.5, "yaw": 90 },
+      { "x": 0.5, "y": 65, "z": 6.5, "yaw": 180 },
+      { "x": -5.5, "y": 65, "z": 0.5, "yaw": -90 }
+    ]
+  },
+  "regions": {
+    "floor": [ { "min": [-12, 64, -12], "max": [12, 64, 12] } ]
+  }
+}

@@ -1,0 +1,13 @@
+name: JunkGamesSdkSample
+version: '${version}'
+main: net.azisaba.jg.plugin.sdksample.ExampleGame
+api-version: '26.3'
+description: JunkGames SDK（JunkGame）を使ったゲームのサンプル
+authors: [ AzisabaNetwork ]
+depend: [ JunkGamesCore ]
+
+commands:
+  # JunkGameCommand: usable only inside this game, hidden from tab completion elsewhere
+  examplemenu:
+    description: サンプルゲームのメニュー（ゲーム内でのみ使用可）
+    usage: /<command>

@@ -1,0 +1,36 @@
+{
+  "format": "junkgames/map",
+  "formatVersion": 1,
+  "id": "tnt_run_classic",
+  "displayName": "クラシック",
+  "world": {
+    "source": { "type": "template", "ref": "templates/tnt_run_classic" },
+    "ifMissing": "create",
+    "generator": { "type": "void" },
+    "lifecycle": "ephemeral",
+    "reset": "recreate"
+  },
+  "compatibleGames": ["tnt_run"],
+  "points": {
+    "spawn": [
+      { "x": 0.5,   "y": 64, "z": -10.5, "yaw": 0,    "pitch": 0 },
+      { "x": 7.5,   "y": 64, "z": -7.5,  "yaw": 45,   "pitch": 0 },
+      { "x": 10.5,  "y": 64, "z": 0.5,   "yaw": 90,   "pitch": 0 },
+      { "x": 7.5,   "y": 64, "z": 7.5,   "yaw": 135,  "pitch": 0 },
+      { "x": 0.5,   "y": 64, "z": 10.5,  "yaw": 180,  "pitch": 0 },
+      { "x": -6.5,  "y": 64, "z": 7.5,   "yaw": -135, "pitch": 0 },
+      { "x": -9.5,  "y": 64, "z": 0.5,   "yaw": -90,  "pitch": 0 },
+      { "x": -6.5,  "y": 64, "z": -6.5,  "yaw": -45,  "pitch": 0 }
+    ]
+  },
+  "regions": {
+    "floor": [
+      { "min": [-15, 63, -15], "max": [15, 63, 15] },
+      { "min": [-15, 55, -15], "max": [15, 55, 15] },
+      { "min": [-15, 47, -15], "max": [15, 47, 15] }
+    ],
+    "death_zone": [
+      { "min": [-60, -64, -60], "max": [60, 40, 60] }
+    ]
+  }
+}

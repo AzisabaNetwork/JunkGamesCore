@@ -1,0 +1,19 @@
+name: JunkGamesSample
+version: '${version}'
+main: net.azisaba.jg.plugin.sample.SamplePlugin
+api-version: '26.3'
+description: JunkGames プラグインのサンプル（ブロック追加・コマンド・ゲーム同梱）
+authors: [ AzisabaNetwork ]
+# Kotlin stdlib and junkgames-api come from JunkGamesCore
+depend: [ JunkGamesCore ]
+
+commands:
+  jgsample:
+    description: サンプルプラグインのコマンド
+    usage: /<command> <lightning|install>
+    permission: junkgames.sample.admin
+
+permissions:
+  junkgames.sample.admin:
+    description: /jgsample
+    default: op

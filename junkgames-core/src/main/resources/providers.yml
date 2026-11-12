@@ -1,0 +1,16 @@
+# Capability providers (spec §12.4). For each capability the first provider in `order` that
+# exists and reports healthy is used. Providers are registered by the core (paper / folia),
+# by external plugins, or by the server fork (native) through Bukkit's ServicesManager.
+# Providers not listed here are never used.
+
+execution:
+  # native = Minogami per-world tick hook (PER_WORLD_PARALLEL)
+  order: [ native, folia, paper ]
+world:
+  order: [ native, slime, multiverse, paper ]
+structure:
+  order: [ native, fawe, worldedit, paper ]
+view:
+  order: [ native, packetevents, paper ]
+tick:
+  order: [ native ]

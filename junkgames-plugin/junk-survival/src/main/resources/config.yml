@@ -1,0 +1,29 @@
+# JunkSurvival の対象ワールド（元の実装では名前が固定でした）
+survival-worlds:
+  - junkSurvival
+  - world_nether
+  - world_the_end
+
+# 難易度を選ぶブロック（エメラルド/ダイヤ/鉄/レッドストーン）を置くワールド
+lobby-world: world
+
+# 全員にバフを配る間隔（ティック。元の実装: 50000）
+buff-interval-ticks: 50000
+
+# 難易度ごとの被ダメージの割り算（元の実装の値）
+damage-divisor:
+  super_easy: 95
+  easy: 80
+  normal: 75
+  hard: 50
+
+# ブロックを壊したときの特殊アイテムの出現率（%、ランダムアイテム1個ごと）
+special-drop-chance:
+  bomb: 4
+  jump: 11
+  kill: 3
+  border: 2
+  power: 5
+
+# チャットの末尾に付ける文字（空にすると無効）
+chat-suffix: '///'

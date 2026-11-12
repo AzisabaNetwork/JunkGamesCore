@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://junkgames.azisaba.net/schema/map.schema.json",
+  "title": "JunkGames map definition",
+  "type": "object",
+  "required": ["format", "formatVersion", "id"],
+  "properties": {
+    "format": { "const": "junkgames/map" },
+    "formatVersion": { "type": "integer", "minimum": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9_]{1,64}$" },
+    "displayName": { "type": "string" },
+    "world": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "object",
+          "properties": {
+            "type": { "enum": ["template", "schematic", "generate", "existing"] },
+            "ref": { "type": "string" },
+            "origin": { "$ref": "#/$defs/vec" }
+          }
+        },
+        "ifMissing": { "enum": ["create", "error"] },
+        "generator": { "oneOf": [{ "type": "string" }, { "type": "object", "properties": { "type": { "type": "string" } } }] },
+        "lifecycle": { "enum": ["ephemeral", "persistent"] },
+        "reset": { "enum": ["recreate", "snapshot", "none"] },
+        "snapshotRegions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "compatibleGames": { "type": "array", "items": { "type": "string" } },
+    "points": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object", "required": ["x", "y", "z"],
+          "properties": { "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": "number" },
+            "yaw": { "type": "number" }, "pitch": { "type": "number" } }
+        }
+      }
+    },
+    "regions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "object", "required": ["min", "max"],
+          "properties": { "min": { "$ref": "#/$defs/vec" }, "max": { "$ref": "#/$defs/vec" } } }
+      }
+    }
+  },
+  "$defs": {
+    "vec": { "type": "array", "items": { "type": "integer" }, "minItems": 3, "maxItems": 3 }
+  }
+}

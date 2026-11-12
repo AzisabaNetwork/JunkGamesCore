@@ -1,0 +1,19 @@
+name: JunkSurvival
+version: '${version}'
+main: net.azisaba.jg.plugin.junksurvival.JunkSurvival
+api-version: '26.3'
+description: めちゃくちゃなサバイバル（ランダムドロップ・特殊アイテム・ワールドボーダー拡張）
+authors: [ 46kuri_, AzisabaNetwork ]
+depend: [ JunkGamesCore ]
+
+commands:
+  junksurvivalgive:
+    description: JunkSurvival の特殊アイテムを受け取る
+    usage: /<command> get <border|bomb|jump|kill|power>（1〜5 でも可）
+    permission: junkSurvivalGive.permission.Admin
+
+permissions:
+  # kept from the old plugin so that existing permission settings keep working
+  junkSurvivalGive.permission.Admin:
+    description: /junksurvivalgive
+    default: op

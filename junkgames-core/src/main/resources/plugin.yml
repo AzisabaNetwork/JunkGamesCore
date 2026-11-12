@@ -1,0 +1,49 @@
+name: JunkGamesCore
+version: '${version}'
+main: net.azisaba.jg.core.JunkGamesCorePlugin
+api-version: '26.3'
+description: Block-based minigame engine for the JunkGames server
+authors: [ AzisabaNetwork ]
+website: https://github.com/AzisabaNetwork/JunkGamesCore
+folia-supported: true
+# old game plugins declare `depend: [JunkGames]` (the 0.x plugin name)
+provides: [ JunkGames ]
+# kotlin-stdlib is bundled in this jar; plugins in junkgames-plugin/ get it via `depend: [JunkGamesCore]`
+commands:
+  junkgames:
+    description: ゲームの選択画面を開く / ゲームに接続する
+    usage: /<command> [game] [map]
+    aliases: [ jg ]
+    permission: junkgames.play
+  play:
+    description: ミニゲームに参加する（引数なしで一覧）
+    usage: /<command> [game] [map]
+    permission: junkgames.play
+  leave:
+    description: ミニゲーム・待ち列から退出する
+    usage: /<command>
+    permission: junkgames.play
+  jgadmin:
+    description: JunkGames の管理
+    usage: /<command> <list|info|instances|start|stop|debug|reload|validate|export-blocks|providers|errors>
+    permission: junkgames.admin
+  jgmap:
+    description: マップ設定ツール
+    usage: /<command> <edit|point|region|game|wand|info|save|exit>
+    permission: junkgames.map
+permissions:
+  junkgames.play:
+    description: /junkgames, /play, /leave
+    default: true
+  junkgames.admin:
+    description: /jgadmin
+    default: op
+  junkgames.map:
+    description: /jgmap (map tool)
+    default: op
+  junkgames.debug:
+    description: see script errors of the instance you are in
+    default: op
+  junkgames.bypass.commands:
+    description: use any command while in a match
+    default: op

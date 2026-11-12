@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://junkgames.azisaba.net/schema/game.schema.json",
+  "title": "JunkGames game definition (IR)",
+  "description": "Shared by the editor, the repository and the core (spec §5.1). Block-level typing is checked by the compiler.",
+  "type": "object",
+  "required": [
+    "format",
+    "formatVersion",
+    "id",
+    "version",
+    "meta",
+    "scripts"
+  ],
+  "properties": {
+    "format": {
+      "const": "junkgames/game"
+    },
+    "formatVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,64}$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "displayName",
+        "minPlayers",
+        "maxPlayers"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "minPlayers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxPlayers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "teams": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "enum": [
+                "none",
+                "teams"
+              ]
+            },
+            "friendlyFire": {
+              "type": "boolean"
+            },
+            "list": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9_]{1,64}$"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "color": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "countdownSeconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "timeLimitSeconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allowLateJoin": {
+          "type": "boolean"
+        },
+        "spectators": {
+          "type": "boolean"
+        },
+        "onDisconnect": {
+          "enum": [
+            "eliminate",
+            "keep"
+          ]
+        },
+        "loopYield": {
+          "type": "boolean"
+        },
+        "endingSeconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "blockBreak": {
+              "type": "boolean"
+            },
+            "blockPlace": {
+              "type": "boolean"
+            },
+            "pvp": {
+              "type": "boolean"
+            },
+            "hunger": {
+              "type": "boolean"
+            },
+            "fallDamage": {
+              "type": "boolean"
+            },
+            "itemDrop": {
+              "type": "boolean"
+            },
+            "naturalRegen": {
+              "type": "boolean"
+            }
+          }
+        },
+        "kits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/item"
+            }
+          }
+        },
+        "favicon": {
+          "type": "string",
+          "description": "selection screen icon (material)"
+        },
+        "category": {
+          "type": "string"
+        },
+        "lore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priority": {
+          "type": "integer"
+        }
+      }
+    },
+    "mapRequirements": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "multiple": {
+                "type": "boolean"
+              },
+              "min": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "regions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "scope",
+          "type"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/name"
+          },
+          "scope": {
+            "enum": [
+              "instance",
+              "player",
+              "team"
+            ]
+          },
+          "type": {
+            "$ref": "#/$defs/valueType"
+          },
+          "default": {}
+        }
+      }
+    },
+    "scripts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "trigger"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "trigger": {
+            "$ref": "#/$defs/node"
+          },
+          "concurrency": {
+            "enum": [
+              "parallel",
+              "restart",
+              "drop",
+              "per_player"
+            ]
+          },
+          "body": {
+            "$ref": "#/$defs/seq"
+          }
+        }
+      }
+    },
+    "customBlocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "body"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/name"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "$ref": "#/$defs/name"
+                },
+                "type": {
+                  "$ref": "#/$defs/valueType"
+                }
+              }
+            }
+          },
+          "returns": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/$defs/valueType"
+              }
+            ]
+          },
+          "body": {
+            "$ref": "#/$defs/seq"
+          }
+        }
+      }
+    },
+    "requires": {
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": "string"
+        },
+        "addons": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "x-editor": {
+      "description": "Editor-only data (coordinates, comments). Ignored by the core."
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[\\p{L}\\p{N}_]{1,64}$"
+    },
+    "valueType": {
+      "type": "string",
+      "pattern": "^(any|number|string|boolean|player|team|entity|location|region|item|material|list(<.+>)?)$"
+    },
+    "item": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "required": [
+            "material"
+          ]
+        }
+      ]
+    },
+    "literal": {
+      "type": "object",
+      "required": [
+        "lit"
+      ],
+      "properties": {
+        "lit": {}
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)+$"
+        },
+        "v": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fields": {
+          "type": "object"
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/literal"
+              },
+              {
+                "$ref": "#/$defs/node"
+              }
+            ]
+          }
+        },
+        "body": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/seq"
+          }
+        },
+        "x-editor": {}
+      }
+    },
+    "seq": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  }
+}

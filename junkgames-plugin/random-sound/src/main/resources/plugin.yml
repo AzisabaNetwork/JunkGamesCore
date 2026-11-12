@@ -1,0 +1,7 @@
+name: RandomSound
+version: '${version}'
+main: net.azisaba.jg.plugin.randomsound.RandomSound
+api-version: '26.3'
+description: ランダムサウンドプラグイン（参加時のランダム音・リズムワールドの棒）
+authors: [ 46kuri_, AzisabaNetwork ]
+depend: [ JunkGamesCore ]

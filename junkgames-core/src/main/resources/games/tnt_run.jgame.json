@@ -1,0 +1,158 @@
+{
+  "format": "junkgames/game",
+  "formatVersion": 1,
+  "id": "tnt_run",
+  "version": 1,
+  "meta": {
+    "displayName": "TNTラン",
+    "description": "足元が消える前に走り続けろ",
+    "favicon": "minecraft:tnt",
+    "category": "サバイバル アクション",
+    "lore": ["<gray>足元のブロックが消えていく", "<gray>最後まで残った人の勝ち"],
+    "priority": 50,
+    "minPlayers": 2,
+    "maxPlayers": 16,
+    "teams": { "mode": "none" },
+    "countdownSeconds": 10,
+    "timeLimitSeconds": 300,
+    "allowLateJoin": false,
+    "spectators": true,
+    "onDisconnect": "eliminate",
+    "rules": { "blockBreak": false, "blockPlace": false, "pvp": false, "hunger": false, "fallDamage": false, "itemDrop": false }
+  },
+  "mapRequirements": {
+    "points": { "spawn": { "multiple": true } },
+    "regions": { "floor": {}, "death_zone": {} }
+  },
+  "variables": [
+    { "name": "survivors", "scope": "instance", "type": "number", "default": 0 }
+  ],
+  "scripts": [
+    {
+      "id": "s_build_floor",
+      "trigger": { "id": "n_h0", "type": "event.state_waiting", "v": 1 },
+      "body": [
+        { "id": "n_b1", "type": "world.fill_region", "v": 1,
+          "inputs": {
+            "region": { "lit": { "regionRef": "floor" } },
+            "block": { "lit": { "material": "minecraft:white_concrete" } }
+          } }
+      ]
+    },
+    {
+      "id": "s_start",
+      "trigger": { "id": "n_h1", "type": "event.game_start", "v": 1 },
+      "body": [
+        { "id": "n_1", "type": "ui.sidebar_title", "v": 1, "inputs": { "text": { "lit": "<red><bold>TNTラン" } } },
+        { "id": "n_2", "type": "ui.announce", "v": 1, "inputs": { "text": { "lit": "<yellow>足元のブロックはすぐ消える！ 止まらずに走れ！" } } }
+      ]
+    },
+    {
+      "id": "s_floor",
+      "trigger": {
+        "id": "n_h2", "type": "event.player_move_onto_block", "v": 1,
+        "fields": { "filter": "in_region" },
+        "inputs": { "region": { "lit": { "regionRef": "floor" } } }
+      },
+      "concurrency": "parallel",
+      "body": [
+        { "id": "n_3", "type": "control.wait_ticks", "v": 1, "inputs": { "ticks": { "lit": 8 } } },
+        { "id": "n_4", "type": "world.set_block", "v": 1,
+          "inputs": {
+            "location": { "type": "event.block_location", "v": 1 },
+            "block": { "lit": { "material": "minecraft:air" } }
+          } }
+      ]
+    },
+    {
+      "id": "s_fall",
+      "trigger": {
+        "id": "n_h3", "type": "event.region_enter", "v": 1,
+        "inputs": { "region": { "lit": { "regionRef": "death_zone" } } }
+      },
+      "concurrency": "per_player",
+      "body": [
+        { "id": "n_5", "type": "game.eliminate", "v": 1 },
+        { "id": "n_6", "type": "custom.call", "fields": { "name": "check_winner" } }
+      ]
+    },
+    {
+      "id": "s_quit",
+      "trigger": { "id": "n_h4", "type": "event.player_quit", "v": 1 },
+      "body": [
+        { "id": "n_7", "type": "custom.call", "fields": { "name": "check_winner" } }
+      ]
+    },
+    {
+      "id": "s_hud",
+      "trigger": { "id": "n_h5", "type": "event.every_second", "v": 1 },
+      "concurrency": "drop",
+      "body": [
+        { "id": "n_8", "type": "var.set", "v": 1,
+          "fields": { "name": "survivors" },
+          "inputs": { "value": { "type": "game.alive_count", "v": 1 } } },
+        { "id": "n_9", "type": "ui.sidebar_line", "v": 1,
+          "inputs": {
+            "line": { "lit": 1 },
+            "text": { "type": "op.join", "v": 1, "inputs": {
+              "a": { "lit": "<white>生存: <green>" },
+              "b": { "type": "var.get", "v": 1, "fields": { "name": "survivors" } } } }
+          } },
+        { "id": "n_10", "type": "ui.sidebar_line", "v": 1,
+          "inputs": {
+            "line": { "lit": 2 },
+            "text": { "type": "op.join", "v": 1, "inputs": {
+              "a": { "lit": "<white>残り時間: <yellow>" },
+              "b": { "type": "game.time_left", "v": 1 } } }
+          } }
+      ]
+    },
+    {
+      "id": "s_timeup",
+      "trigger": { "id": "n_h6", "type": "event.time_up", "v": 1 },
+      "body": [
+        { "id": "n_11", "type": "ui.announce", "v": 1, "inputs": { "text": { "lit": "<gray>時間切れ！" } } },
+        { "id": "n_12", "type": "game.end", "v": 1, "fields": { "kind": "none" } }
+      ]
+    }
+  ],
+  "customBlocks": [
+    {
+      "name": "check_winner",
+      "params": [],
+      "returns": null,
+      "body": [
+        { "id": "n_20", "type": "control.if", "v": 1,
+          "inputs": {
+            "condition": { "type": "op.lt", "v": 1, "inputs": {
+              "a": { "type": "game.alive_count", "v": 1 },
+              "b": { "lit": 2 } } }
+          },
+          "body": {
+            "do": [
+              { "id": "n_21", "type": "control.if_else", "v": 1,
+                "inputs": {
+                  "condition": { "type": "op.eq", "v": 1, "inputs": {
+                    "a": { "type": "game.alive_count", "v": 1 },
+                    "b": { "lit": 1 } } }
+                },
+                "body": {
+                  "do": [
+                    { "id": "n_22", "type": "game.end", "v": 1,
+                      "fields": { "kind": "player" },
+                      "inputs": { "winner": { "type": "list.item", "v": 1, "inputs": {
+                        "list": { "type": "game.alive_players", "v": 1 },
+                        "index": { "lit": 1 } } } } }
+                  ],
+                  "else": [
+                    { "id": "n_23", "type": "game.end", "v": 1, "fields": { "kind": "none" } }
+                  ]
+                } }
+            ]
+          } }
+      ]
+    }
+  ],
+  "requires": { "core": ">=1.0.0" },
+  "x-editor": { "note": "sample game bundled with JunkGamesCore" }
+}

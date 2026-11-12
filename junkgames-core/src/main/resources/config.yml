@@ -1,0 +1,53 @@
+# JunkGamesCore
+# Server id reported to the definition repository (spec §10.2).
+server-id: junkgames-1
+
+# Maximum number of matches running at the same time (spec §8.2).
+# On Minogami, size this from max-world-threads and CPU cores (spec §12.8 convention 8).
+max-instances: 8
+
+# Main lobby (restored from 0.x). Players are sent here on join and after matches.
+# The world is created as an empty world when missing. The old `spawn:` section is still read
+# when `lobby:` has no coordinates.
+lobby:
+  world: lobby
+  create-if-missing: true
+  x: 0.5
+  y: 64
+  z: 0.5
+  yaw: 0
+  pitch: 0
+
+# Teleport players to the lobby spawn when they join the server (0.x behaviour).
+teleport-to-lobby-on-join: true
+
+# Execution budgets and resource limits per instance (spec §7.2 / §7.4).
+limits:
+  per-runner-budget: 1000          # steps per runner per tick
+  per-instance-budget: 20000       # steps per instance per tick
+  runaway-ticks: 200               # a runner exhausting its budget this many ticks in a row is stopped
+  max-runners: 512
+  max-entities: 200
+  max-fill-blocks-per-tick: 32768
+  max-list-size: 10000
+  max-string-length: 4096
+  max-call-depth: 64
+  reporter-step-limit: 10000       # steps allowed inside one custom reporter call
+  error-threshold-per-minute: 10   # more runtime errors than this invalidates the match (spec §7.5)
+
+# Persistent worlds may only be auto-created when this is true (spec §12.5).
+allow-persistent-world-create: false
+
+# Show script errors in chat to participants with junkgames.debug.
+debug-messages: true
+
+# Pre-created worlds per map id, to make arenas start faster (spec §8.1).
+warm-pool: {}
+#  tnt_run_classic: 1
+
+# Commands players may use while in a match.
+allowed-commands-in-game:
+  - leave
+  - msg
+  - tell
+  - r

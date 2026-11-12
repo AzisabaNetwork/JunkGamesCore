@@ -1,0 +1,9 @@
+# 棒を左クリックするとランダムな音が鳴るワールド
+rhythm-world: RhythmWorld
+# 参加してから音が鳴るまでのティック数（元の実装: 7秒）
+join-delay-ticks: 140
+# 鳴らさない音
+excluded-sounds:
+  - minecraft:entity.spider.ambient
+  - minecraft:entity.spider.step
+  - minecraft:music_disc.11

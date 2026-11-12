@@ -1,0 +1,70 @@
+{
+  "format": "junkgames/game",
+  "formatVersion": 1,
+  "id": "sample_storm",
+  "version": 1,
+  "meta": {
+    "displayName": "サンダーストーム",
+    "description": "落ちてくる雷を避けて最後まで生き残れ（サンプル）",
+    "minPlayers": 2,
+    "maxPlayers": 12,
+    "countdownSeconds": 10,
+    "timeLimitSeconds": 90,
+    "spectators": true,
+    "rules": { "blockBreak": false, "blockPlace": false, "pvp": false, "hunger": false, "fallDamage": false, "itemDrop": false }
+  },
+  "mapRequirements": {
+    "points": { "spawn": { "multiple": true } },
+    "regions": { "floor": {} }
+  },
+  "variables": [
+    { "name": "strikes", "scope": "instance", "type": "number", "default": 1 }
+  ],
+  "scripts": [
+    {
+      "id": "s_floor",
+      "trigger": { "id": "h_wait", "type": "event.state_waiting" },
+      "body": [
+        { "id": "n_fill", "type": "world.fill_region",
+          "inputs": { "region": { "lit": { "regionRef": "floor" } }, "block": { "lit": { "material": "minecraft:grass_block" } } } }
+      ]
+    },
+    {
+      "id": "s_storm",
+      "trigger": { "id": "h_sec", "type": "event.every_second" },
+      "concurrency": "drop",
+      "body": [
+        { "id": "n_rep", "type": "control.repeat",
+          "inputs": { "times": { "type": "var.get", "fields": { "name": "strikes" } } },
+          "body": { "do": [
+            { "id": "n_bolt", "type": "sample.lightning", "fields": { "damage": "true" },
+              "inputs": { "location": { "type": "world.random_location_in", "inputs": { "region": { "lit": { "regionRef": "floor" } } } } } }
+          ] } },
+        { "id": "n_more", "type": "var.change", "fields": { "name": "strikes" }, "inputs": { "delta": { "lit": 0.2 } } }
+      ]
+    },
+    {
+      "id": "s_death",
+      "trigger": { "id": "h_death", "type": "event.player_death" },
+      "body": [
+        { "id": "n_elim", "type": "game.eliminate" },
+        { "id": "n_msg", "type": "ui.announce",
+          "inputs": { "text": { "type": "op.join", "inputs": {
+            "a": { "type": "sample.random_color" },
+            "b": { "type": "op.join", "inputs": { "a": { "type": "player.name" }, "b": { "lit": " が雷に打たれた！" } } } } } } },
+        { "id": "n_check", "type": "control.if",
+          "inputs": { "condition": { "type": "op.lt", "inputs": { "a": { "type": "game.alive_count" }, "b": { "lit": 2 } } } },
+          "body": { "do": [
+            { "id": "n_win", "type": "game.end", "fields": { "kind": "player" },
+              "inputs": { "winner": { "type": "list.item", "inputs": { "list": { "type": "game.alive_players" }, "index": { "lit": 1 } } } } }
+          ] } }
+      ]
+    },
+    {
+      "id": "s_timeup",
+      "trigger": { "id": "h_time", "type": "event.time_up" },
+      "body": [ { "id": "n_draw", "type": "game.end", "fields": { "kind": "none" } } ]
+    }
+  ],
+  "requires": { "core": ">=1.0.0", "addons": { "JunkGamesSample": ">=1.0.0" } }
+}
